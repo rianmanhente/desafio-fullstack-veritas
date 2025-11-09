@@ -4,49 +4,54 @@ export const TabsContainer = styled.div`
   display: flex;
   gap: 8px;
   padding: 16px 24px;
-  background: #f5f5f5;
-  border-bottom: 2px solid #e0e0e0;
+  background: ${({ theme }) => theme.background.primary};
+  border-bottom: 2px solid ${({ theme }) => theme.border.default};
   overflow-x: auto;
-  
+
   &::-webkit-scrollbar {
     height: 6px;
   }
-  
+
   &::-webkit-scrollbar-thumb {
-    background: #ccc;
+    background: ${({ theme }) => theme.colors.darkGray};
     border-radius: 3px;
   }
 `;
 
-export const Tab = styled.button<{ active: boolean }>`
-  display: flex;
-  align-items: center;
-  gap: 8px;
+export const Tab = styled.button<{ active?: boolean }>`
   padding: 10px 20px;
-  background: ${({ active }) => (active ? "#fff" : "transparent")};
-  border: ${({ active }) => (active ? "2px solid #3085d6" : "2px solid transparent")};
-  border-radius: 8px 8px 0 0;
-  cursor: pointer;
+  background: ${({ theme, active }) =>
+    active ? theme.button.primary.background : theme.button.secondary.background};
+  border: none;
+  border-radius: 8px;
+  color: ${({ theme, active }) =>
+    active ? theme.button.primary.color : theme.button.secondary.color};
   font-size: 14px;
-  font-weight: ${({ active }) => (active ? "600" : "400")};
-  color: ${({ active }) => (active ? "#3085d6" : "#666")};
+  font-weight: 500;
+  cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
-  position: relative;
+  flex-shrink: 0;
 
   &:hover {
-    background: ${({ active }) => (active ? "#fff" : "#e8e8e8")};
+    background: ${({ theme, active }) =>
+      active ? theme.button.primary.hover : theme.button.secondary.hover};
   }
 `;
 
 export const TabContent = styled.span`
-  flex: 1;
+  display: block;
 `;
 
 export const TabActions = styled.div`
   display: flex;
   gap: 4px;
-  margin-left: 8px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+
+  ${Tab}:hover & {
+    opacity: 1;
+  }
 `;
 
 export const EditButton = styled.button`
@@ -62,7 +67,7 @@ export const EditButton = styled.button`
   transition: background 0.2s ease;
 
   &:hover {
-    background: rgba(0, 0, 0, 0.1);
+    background: ${({ theme }) => theme.background.secondary};
   }
 `;
 
@@ -79,23 +84,24 @@ export const DeleteButton = styled.button`
   transition: background 0.2s ease;
 
   &:hover {
-    background: rgba(220, 53, 69, 0.1);
+    background: rgba(220, 53, 69, 0.2);
   }
 `;
 
 export const AddBoardButton = styled.button`
   padding: 10px 20px;
-  background: #3085d6;
+  background: ${({ theme }) => theme.button.primary.background};
   border: none;
   border-radius: 8px;
-  color: white;
+  color: ${({ theme }) => theme.button.primary.color};
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   transition: background 0.2s ease;
   white-space: nowrap;
+  flex-shrink: 0;
 
   &:hover {
-    background: #2574c1;
+    background: ${({ theme }) => theme.button.primary.hover};
   }
 `;

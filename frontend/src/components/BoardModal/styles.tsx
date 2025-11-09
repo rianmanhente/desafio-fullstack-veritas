@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { theme } from "../../utils/theme";
 
 export const ModalOverlay = styled.div`
   position: fixed;
@@ -6,7 +7,7 @@ export const ModalOverlay = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.5); /* overlay genérico */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -14,11 +15,11 @@ export const ModalOverlay = styled.div`
 `;
 
 export const ModalContent = styled.div`
-  background: white;
+  background: ${({ theme }) => theme.background.primary};
   border-radius: 12px;
   width: 90%;
   max-width: 500px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 `;
 
 export const ModalHeader = styled.div`
@@ -26,12 +27,15 @@ export const ModalHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 20px 24px;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 2px solid ${({ theme }) => theme.border.default};
+  background: ${({ theme }) => theme.colors.darker};
+  border-radius: 10px 10px 0 0;
 
   h2 {
     margin: 0;
     font-size: 20px;
-    color: #333;
+    color: ${({ theme }) => theme.colors.light};
+    font-weight: 600;
   }
 `;
 
@@ -39,47 +43,48 @@ export const CloseButton = styled.button`
   background: none;
   border: none;
   font-size: 28px;
-  color: #999;
+  color: ${({ theme }) => theme.text.secondary};
   cursor: pointer;
-  line-height: 1;
-  padding: 0;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
   transition: all 0.2s ease;
 
   &:hover {
-    background: #f0f0f0;
-    color: #333;
+    background: ${({ theme }) => theme.colors.gray}33; /* 20% opacity */
+    color: ${({ theme }) => theme.text.primary};
   }
 `;
 
 export const ModalBody = styled.div`
   padding: 24px;
+  background: ${({ theme }) => theme.background.primary};
 
   label {
     display: block;
     margin-bottom: 8px;
     font-weight: 500;
-    color: #555;
+    color: ${({ theme }) => theme.text.secondary};
     font-size: 14px;
   }
 `;
 
 export const Input = styled.input`
   width: 100%;
-  padding: 12px;
-  border: 1px solid #ddd;
+  padding: 12px 0px 10px 0px;
+  border: 2px solid ${({ theme }) => theme.border.default};
   border-radius: 6px;
   font-size: 14px;
+  color: ${({ theme }) => theme.text.primary};
   transition: border-color 0.2s ease;
 
   &:focus {
     outline: none;
-    border-color: #3085d6;
+    border-color: ${({ theme }) => theme.colors.darkGray};
+  }
+
+  &::placeholder {
+    color: ${({ theme }) => theme.text.muted};
   }
 `;
 
@@ -88,7 +93,9 @@ export const ModalFooter = styled.div`
   justify-content: flex-end;
   gap: 12px;
   padding: 16px 24px;
-  border-top: 1px solid #e0e0e0;
+  border-top: 2px solid ${({ theme }) => theme.border.default};
+  background: ${({ theme }) => theme.background.primary};
+  border-radius: 0 0 10px 10px;
 `;
 
 export const Button = styled.button<{ variant: "primary" | "secondary" }>`
@@ -100,16 +107,16 @@ export const Button = styled.button<{ variant: "primary" | "secondary" }>`
   cursor: pointer;
   transition: all 0.2s ease;
 
-  ${({ variant }) =>
+  ${({ theme, variant }) =>
     variant === "primary"
       ? `
-    background: #3085d6;
-    color: white;
-    &:hover { background: #2574c1; }
+    background: ${theme.button.primary.background};
+    color: ${theme.button.primary.color};
+    &:hover { background: ${theme.button.primary.hover}; }
   `
       : `
-    background: #f0f0f0;
-    color: #666;
-    &:hover { background: #e0e0e0; }
+    background: ${theme.button.secondary.background};
+    color: ${theme.button.secondary.color};
+    &:hover { background: ${theme.button.secondary.hover}; }
   `}
 `;

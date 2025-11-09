@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Input, TextArea, Button, CloseButton } from "./styles";
 import type { Task } from "../../utils/typeTask";
+import Swal from "sweetalert2";
 
 interface TaskModalProps {
   isOpen: boolean;
@@ -31,7 +32,12 @@ export default function TaskModal({ isOpen, onClose, onSubmit, status, task }: T
     e.preventDefault();
 
     if (!title.trim()) {
-      alert("O título é obrigatório!");
+           Swal.fire({
+                    icon: "error",
+                    title: "o titulo é obrigatório!",
+                    text: "Coloque o título!",
+                    confirmButtonColor: "#d33",
+                  });
       return;
     }
 

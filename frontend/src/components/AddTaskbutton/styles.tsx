@@ -5,11 +5,13 @@ export const ButtonContainer = styled.button`
   align-items: center;
   gap: 8px;
   padding: 12px 16px;
-  background: transparent;
-  border: 2px dashed #ccc;
+
+  background: ${({ theme }) => theme.colors.light};
+  border: 2px dashed ${({ theme }) => theme.colors.darkGray};
   border-radius: 8px;
   cursor: pointer;
-  color: #666;
+
+  color: ${({ theme }) => theme.colors.darker};
   font-size: 14px;
   font-weight: 500;
   transition: all 0.2s ease;
@@ -17,13 +19,17 @@ export const ButtonContainer = styled.button`
   margin-top: 12px;
 
   &:hover {
-    border-color: #999;
-    color: #333;
-    background: rgba(0, 0, 0, 0.02);
+    border-color: ${({ theme }) => theme.colors.darker};
+    color: ${({ theme }) => theme.colors.black};
+    transform: translateY(-1px);
   }
 
   span:first-child {
     font-size: 20px;
     font-weight: 600;
+  }
+
+  &:active {
+    transform: scale(0.98);
   }
 `;
