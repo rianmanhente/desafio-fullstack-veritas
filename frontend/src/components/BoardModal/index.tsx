@@ -28,7 +28,7 @@ export default function BoardModal({ isOpen, onClose, onSubmit, board }: BoardMo
 
     if (!name.trim()) {
           Swal.fire({
-              icon: "error",
+              icon: "warning",
               title: "Nome do Board é  obrigatório!",
               text: "Coloque o nome do board!!",
               confirmButtonColor: "#d33",
