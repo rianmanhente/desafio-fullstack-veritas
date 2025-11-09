@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Input, Button, CloseButton } from "./styles";
 import type { Board } from "../../services/getBoards";
+import Swal from "sweetalert2";
 
 interface BoardModalProps {
   isOpen: boolean;
@@ -26,7 +27,12 @@ export default function BoardModal({ isOpen, onClose, onSubmit, board }: BoardMo
     e.preventDefault();
 
     if (!name.trim()) {
-      alert("O nome do board é obrigatório!");
+          Swal.fire({
+              icon: "warning",
+              title: "Nome do Board é  obrigatório!",
+              text: "Coloque o nome do board!!",
+              confirmButtonColor: "#d33",
+            });
       return;
     }
 

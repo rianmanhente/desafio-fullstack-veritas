@@ -1,5 +1,6 @@
-import { CardContainer, CardHeader, CardTitle, CardDescription, CardActions, IconButton } from "./styles";
+import { CardContainer, CardHeader, CardTitle, CardDescription, CardActions, IconButton, CardFooter, DateText } from "./styles";
 import type { Task } from "../../utils/typeTask";
+import { formatDateRelative } from "../../utils/formatDate";
 
 interface TaskCardProps {
   task: Task;
@@ -8,6 +9,9 @@ interface TaskCardProps {
 }
 
 export default function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
+  // Verifica se foi editada (updatedAt diferente de createdAt)
+  const wasEdited = task.updatedAt && task.createdAt && task.updatedAt !== task.createdAt;
+
   return (
     <CardContainer>
       <CardHeader>
@@ -22,6 +26,16 @@ export default function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
         </CardActions>
       </CardHeader>
       <CardDescription>{task.description}</CardDescription>
+      
+      {(task.createdAt || task.updatedAt) && (
+        <CardFooter>
+          {wasEdited && task.updatedAt ? (
+            <DateText>✏️ Editada {formatDateRelative(task.updatedAt)}</DateText>
+          ) : task.createdAt ? (
+            <DateText>📅 Criada {formatDateRelative(task.createdAt)}</DateText>
+          ) : null}
+        </CardFooter>
+      )}
     </CardContainer>
   );
 }

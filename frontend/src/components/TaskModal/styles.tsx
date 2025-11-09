@@ -2,10 +2,7 @@ import styled from "styled-components";
 
 export const ModalOverlay = styled.div`
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
@@ -14,32 +11,23 @@ export const ModalOverlay = styled.div`
   animation: fadeIn 0.2s ease;
 
   @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
 `;
 
 export const ModalContent = styled.div`
-  background: white;
+  background: ${({ theme }) => theme.background.modal};
   border-radius: 12px;
   width: 90%;
   max-width: 500px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   animation: slideUp 0.3s ease;
+  border: 1px solid ${({ theme }) => theme.border.default};
 
   @keyframes slideUp {
-    from {
-      transform: translateY(20px);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
   }
 `;
 
@@ -48,13 +36,13 @@ export const ModalHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 20px 24px;
-  border-bottom: 1px solid #e5e5e5;
+  border-bottom: 1px solid ${({ theme }) => theme.border.default};
 
   h2 {
     margin: 0;
     font-size: 20px;
     font-weight: 600;
-    color: #333;
+    color: ${({ theme }) => theme.text.primary};
   }
 `;
 
@@ -63,20 +51,19 @@ export const CloseButton = styled.button`
   border: none;
   font-size: 28px;
   cursor: pointer;
-  color: #999;
+  color: ${({ theme }) => theme.text.secondary};
   line-height: 1;
-  padding: 0;
   width: 32px;
   height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
-  transition: all 0.2s;
+  border-radius: 6px;
+  transition: all 0.2s ease;
 
   &:hover {
-    background: #f5f5f5;
-    color: #333;
+    background: ${({ theme }) => theme.colors.light};
+    color: ${({ theme }) => theme.text.primary};
   }
 `;
 
@@ -85,56 +72,57 @@ export const ModalBody = styled.div`
 
   div {
     margin-bottom: 20px;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
+    &:last-child { margin-bottom: 0; }
   }
 
   label {
     display: block;
     margin-bottom: 8px;
     font-weight: 500;
-    color: #555;
+    color: ${({ theme }) => theme.text.secondary};
     font-size: 14px;
   }
 `;
 
 export const Input = styled.input`
   width: 100%;
-  padding: 12px;
-  border: 2px solid #e5e5e5;
+  padding: 11px 10px 10px 0px;
+  border: 2px solid ${({ theme }) => theme.border.default};
   border-radius: 8px;
   font-size: 14px;
-  transition: border-color 0.2s;
+  background: ${({ theme }) => theme.colors.light};
+  color: ${({ theme }) => theme.text.primary};
+  transition: border-color 0.2s, box-shadow 0.2s;
 
   &:focus {
     outline: none;
-    border-color: #4a9eff;
+    border-color: ${({ theme }) => theme.button.primary.background};
   }
 
   &::placeholder {
-    color: #999;
+    color: ${({ theme }) => theme.text.muted};
   }
 `;
 
 export const TextArea = styled.textarea`
   width: 100%;
-  padding: 12px;
-  border: 2px solid #e5e5e5;
+  padding: 11px 10px 10px 0px;
+  border: 2px solid ${({ theme }) => theme.border.default};
   border-radius: 8px;
   font-size: 14px;
+  background: ${({ theme }) => theme.colors.light};
+  color: ${({ theme }) => theme.text.primary};
   font-family: inherit;
   resize: vertical;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
 
   &:focus {
     outline: none;
-    border-color: #4a9eff;
+    border-color: ${({ theme }) => theme.button.primary.background};
   }
 
   &::placeholder {
-    color: #999;
+    color: ${({ theme }) => theme.text.muted};
   }
 `;
 
@@ -143,7 +131,7 @@ export const ModalFooter = styled.div`
   justify-content: flex-end;
   gap: 12px;
   padding: 20px 24px;
-  border-top: 1px solid #e5e5e5;
+  border-top: 1px solid ${({ theme }) => theme.border.default};
 `;
 
 export const Button = styled.button<{ variant: "primary" | "secondary" }>`
@@ -152,25 +140,25 @@ export const Button = styled.button<{ variant: "primary" | "secondary" }>`
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   border: none;
 
-  ${({ variant }) =>
+  ${({ variant, theme }) =>
     variant === "primary"
       ? `
-    background: #4a9eff;
-    color: white;
+    background: ${theme.button.primary.background};
+    color: ${theme.button.primary.color};
 
     &:hover {
-      background: #3a8eef;
+      background: ${theme.button.primary.hover};
     }
   `
       : `
-    background: #f5f5f5;
-    color: #666;
+    background: ${theme.button.secondary.background};
+    color: ${theme.button.secondary.color};
 
     &:hover {
-      background: #e5e5e5;
+      background: ${theme.button.secondary.hover};
     }
   `}
 `;
