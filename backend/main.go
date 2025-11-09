@@ -6,14 +6,12 @@ import (
 	"net/http"
 )
 
-// Middleware CORS para permitir acesso do frontend
 func enableCORS(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
-		// Requisição OPTIONS (pré-flight)
 		if r.Method == "OPTIONS" {
 			w.WriteHeader(http.StatusOK)
 			return
@@ -23,7 +21,35 @@ func enableCORS(next http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-// Router manual para /tasks e /tasks/:id
+// Router para /boards
+func boardsRouter(w http.ResponseWriter, r *http.Request) {
+	switch {
+	case r.Method == "GET" && r.URL.Path == "/boards":
+		GetBoardsHandler(w, r)
+		return
+
+	case r.Method == "POST" && r.URL.Path == "/boards":
+		CreateBoardHandler(w, r)
+		saveBoards()
+		return
+
+	case r.Method == "PUT" && len(r.URL.Path) > len("/boards/"):
+		UpdateBoardHandler(w, r)
+		saveBoards()
+		return
+
+	case r.Method == "DELETE" && len(r.URL.Path) > len("/boards/"):
+		DeleteBoardHandler(w, r)
+		saveBoards()
+		saveTasks() // Salva tasks também pois podem ter sido deletadas
+		return
+
+	default:
+		http.Error(w, "Rota não encontrada", http.StatusNotFound)
+	}
+}
+
+// Router para /tasks
 func tasksRouter(w http.ResponseWriter, r *http.Request) {
 	switch {
 	case r.Method == "GET" && r.URL.Path == "/tasks":
@@ -32,19 +58,16 @@ func tasksRouter(w http.ResponseWriter, r *http.Request) {
 
 	case r.Method == "POST" && r.URL.Path == "/tasks":
 		CreateTaskHandler(w, r)
-		// 💾 Salva as tarefas no arquivo após criar
 		saveTasks()
 		return
 
 	case r.Method == "PUT" && len(r.URL.Path) > len("/tasks/"):
 		UpdateTaskHandler(w, r)
-		// 💾 Salva as tarefas no arquivo após atualizar
 		saveTasks()
 		return
 
 	case r.Method == "DELETE" && len(r.URL.Path) > len("/tasks/"):
 		DeleteTaskHandler(w, r)
-		// 💾 Salva as tarefas no arquivo após deletar
 		saveTasks()
 		return
 
@@ -54,18 +77,25 @@ func tasksRouter(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	// 🔹 Carrega as tarefas do arquivo ao iniciar
+	// Carrega boards e tasks
+	if err := loadBoards(); err != nil {
+		fmt.Println("⚠️ Erro ao carregar boards:", err)
+	} else {
+		fmt.Println("✅ Boards carregados com sucesso.")
+	}
+
 	if err := loadTasks(); err != nil {
 		fmt.Println("⚠️ Erro ao carregar tasks:", err)
 	} else {
-		fmt.Println("✅ Tasks carregadas do arquivo com sucesso.")
+		fmt.Println("✅ Tasks carregadas com sucesso.")
 	}
 
-	// Configurar rotas com CORS
+	// Configurar rotas
+	http.HandleFunc("/boards", enableCORS(boardsRouter))
+	http.HandleFunc("/boards/", enableCORS(boardsRouter))
 	http.HandleFunc("/tasks", enableCORS(tasksRouter))
 	http.HandleFunc("/tasks/", enableCORS(tasksRouter))
 
-	// Health check
 	http.HandleFunc("/health", enableCORS(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		fmt.Fprintf(w, `{"status":"ok"}`)
@@ -74,11 +104,18 @@ func main() {
 	port := ":8080"
 	fmt.Printf("🚀 Servidor rodando em http://localhost%s\n", port)
 	fmt.Println("Endpoints disponíveis:")
-	fmt.Println("  GET    /tasks      - Listar tarefas")
-	fmt.Println("  POST   /tasks      - Criar tarefa")
-	fmt.Println("  PUT    /tasks/:id  - Atualizar tarefa")
-	fmt.Println("  DELETE /tasks/:id  - Deletar tarefa")
-	fmt.Println("  GET    /health     - Health check")
+	fmt.Println("  📋 BOARDS:")
+	fmt.Println("    GET    /boards      - Listar boards")
+	fmt.Println("    POST   /boards      - Criar board")
+	fmt.Println("    PUT    /boards/:id  - Atualizar board")
+	fmt.Println("    DELETE /boards/:id  - Deletar board")
+	fmt.Println("  ✅ TASKS:")
+	fmt.Println("    GET    /tasks?boardId=xxx - Listar tarefas (filtrado por board)")
+	fmt.Println("    POST   /tasks      - Criar tarefa")
+	fmt.Println("    PUT    /tasks/:id  - Atualizar tarefa")
+	fmt.Println("    DELETE /tasks/:id  - Deletar tarefa")
+	fmt.Println("  🏥 HEALTH:")
+	fmt.Println("    GET    /health     - Health check")
 
 	log.Fatal(http.ListenAndServe(port, nil))
 }

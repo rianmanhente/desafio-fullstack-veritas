@@ -6,11 +6,20 @@ import (
 	"time"
 )
 
+// Board representa um quadro Kanban
+type Board struct {
+	ID        string    `json:"id"`
+	Name      string    `json:"name"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
+}
+
 // Task representa uma tarefa no Kanban
 type Task struct {
 	ID          string    `json:"id"`
-	Title       *string    `json:"title"`
-	Description *string    `json:"description"`
+	BoardID     string    `json:"boardId"` // 🔸 Nova propriedade
+	Title       *string   `json:"title"`
+	Description *string   `json:"description"`
 	Status      string    `json:"status"`
 	CreatedAt   time.Time `json:"createdAt"`
 	UpdatedAt   time.Time `json:"updatedAt"`
@@ -27,13 +36,25 @@ var validStatuses = []string{
 func NormalizeStatus(status string) (string, bool) {
 	for _, s := range validStatuses {
 		if strings.EqualFold(s, status) {
-			return s, true // retorna o nome padronizado (ex: "A Fazer")
+			return s, true
 		}
 	}
 	return "", false
 }
 
+func (b *Board) Validate() error {
+	if strings.TrimSpace(b.Name) == "" {
+		return errors.New("o nome do board é obrigatório")
+	}
+	return nil
+}
+
 func (t *Task) Validate() error {
+	// 🔸 BoardID obrigatório
+	if strings.TrimSpace(t.BoardID) == "" {
+		return errors.New("o boardId é obrigatório")
+	}
+
 	// 🔸 Título obrigatório
 	if t.Title == nil || strings.TrimSpace(*t.Title) == "" {
 		return errors.New("o título é obrigatório")
