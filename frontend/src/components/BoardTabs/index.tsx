@@ -51,22 +51,20 @@ export default function BoardTabs({
       {boards.map((board) => (
         <Tab
           key={board.id}
-          active={activeBoard === board.id}
+          $isActive={activeBoard === board.id} // 🔸 MUDANÇA AQUI
           onClick={() => onSelectBoard(board.id)}
           onMouseEnter={() => setHoveredTab(board.id)}
           onMouseLeave={() => setHoveredTab(null)}
         >
           <TabContent>{board.name}</TabContent>
-          {hoveredTab === board.id && (
-            <TabActions>
-              <EditButton onClick={(e) => handleEdit(e, board)} title="Editar board">
-                ✏️
-              </EditButton>
-              <DeleteButton onClick={(e) => handleDelete(e, board)} title="Deletar board">
-                🗑️
-              </DeleteButton>
-            </TabActions>
-          )}
+          <TabActions>
+            <EditButton onClick={(e) => handleEdit(e, board)} title="Editar board">
+              ✏️
+            </EditButton>
+            <DeleteButton onClick={(e) => handleDelete(e, board)} title="Deletar board">
+              🗑️
+            </DeleteButton>
+          </TabActions>
         </Tab>
       ))}
       <AddBoardButton onClick={onAddBoard}>+ Novo Board</AddBoardButton>

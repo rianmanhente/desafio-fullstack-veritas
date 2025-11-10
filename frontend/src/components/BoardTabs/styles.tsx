@@ -18,39 +18,46 @@ export const TabsContainer = styled.div`
   }
 `;
 
-export const Tab = styled.button<{ active?: boolean }>`
-  padding: 10px 20px;
-  background: ${({ theme, active }) =>
-    active ? theme.button.primary.background : theme.button.secondary.background};
+export const Tab = styled.button<{ $isActive: boolean }>`
+  padding: 10px 16px;
+  background: ${({ $isActive }) =>
+    $isActive ? '#000000' : 'transparent'}; 
   border: none;
-  border-radius: 8px;
-  color: ${({ theme, active }) =>
-    active ? theme.button.primary.color : theme.button.secondary.color};
+  border-bottom: 2px solid
+    ${({ $isActive, theme }) =>
+      $isActive ? theme.colors.light : 'transparent'};
+  color: ${({ $isActive }) => 
+    $isActive ? '#ffffff' : 'inherit'}; 
   font-size: 14px;
-  font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
-  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: space-between;
+  border-radius: 8px;
 
   &:hover {
-    background: ${({ theme, active }) =>
-      active ? theme.button.primary.hover : theme.button.secondary.hover};
+    background: ${({ $isActive, theme }) => 
+      $isActive ? '#00000' : theme.background.secondary}; 
   }
 `;
 
 export const TabContent = styled.span`
   display: block;
+  flex: 1; 
 `;
 
 export const TabActions = styled.div`
   display: flex;
   gap: 4px;
-  opacity: 0;
+  opacity: 0.5; 
   transition: opacity 0.2s ease;
+  flex-shrink: 0;
 
   ${Tab}:hover & {
-    opacity: 1;
+    opacity: 1; 
   }
 `;
 
@@ -58,8 +65,8 @@ export const EditButton = styled.button`
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 16px;
-  padding: 4px;
+  font-size: 14px; 
+  padding: 2px 4px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -75,8 +82,8 @@ export const DeleteButton = styled.button`
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 16px;
-  padding: 4px;
+  font-size: 14px;
+  padding: 2px 4px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -87,6 +94,8 @@ export const DeleteButton = styled.button`
     background: rgba(220, 53, 69, 0.2);
   }
 `;
+
+
 
 export const AddBoardButton = styled.button`
   padding: 10px 20px;
