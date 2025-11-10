@@ -13,51 +13,48 @@ import (
 var (
 	tasks  = []Task{}
 	boards = []Board{}
+	users  = []User{}
 )
 
 // ========== BOARDS HANDLERS ==========
 
-// GetBoardsHandler retorna todos os boards
 func GetBoardsHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(boards)
 }
 
-// CreateBoardHandler cria um novo board
 func CreateBoardHandler(w http.ResponseWriter, r *http.Request) {
-    w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json")
 
-    var newBoard Board
-    if err := json.NewDecoder(r.Body).Decode(&newBoard); err != nil {
-        http.Error(w, "JSON inválido", http.StatusBadRequest)
-        return
-    }
+	var newBoard Board
+	if err := json.NewDecoder(r.Body).Decode(&newBoard); err != nil {
+		http.Error(w, "JSON inválido", http.StatusBadRequest)
+		return
+	}
 
-    if err := newBoard.Validate(); err != nil {
-        http.Error(w, err.Error(), http.StatusBadRequest)
-        return
-    }
+	if err := newBoard.Validate(); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
-    //  Validação: nome único (case-insensitive)
-    newName := strings.TrimSpace(strings.ToLower(newBoard.Name))
-    for _, b := range boards {
-        if strings.ToLower(b.Name) == newName {
-            http.Error(w, "já existe um board com esse nome", http.StatusBadRequest)
-            return
-        }
-    }
+	newName := strings.TrimSpace(strings.ToLower(newBoard.Name))
+	for _, b := range boards {
+		if strings.ToLower(b.Name) == newName {
+			http.Error(w, "já existe um board com esse nome", http.StatusBadRequest)
+			return
+		}
+	}
 
-    newBoard.ID = uuid.New().String()
-    newBoard.CreatedAt = time.Now()
-    newBoard.UpdatedAt = time.Now()
+	newBoard.ID = uuid.New().String()
+	newBoard.CreatedAt = time.Now()
+	newBoard.UpdatedAt = time.Now()
 
-    boards = append(boards, newBoard)
+	boards = append(boards, newBoard)
 
-    w.WriteHeader(http.StatusCreated)
-    json.NewEncoder(w).Encode(newBoard)
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(newBoard)
 }
 
-// UpdateBoardHandler atualiza um board existente
 func UpdateBoardHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -84,7 +81,7 @@ func UpdateBoardHandler(w http.ResponseWriter, r *http.Request) {
 		if board.ID == id {
 			boards[i].Name = updatedBoard.Name
 			boards[i].UpdatedAt = time.Now()
-			
+
 			json.NewEncoder(w).Encode(boards[i])
 			found = true
 			break
@@ -96,7 +93,6 @@ func UpdateBoardHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// DeleteBoardHandler deleta um board e todas as suas tarefas
 func DeleteBoardHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -110,10 +106,9 @@ func DeleteBoardHandler(w http.ResponseWriter, r *http.Request) {
 	found := false
 	for i, board := range boards {
 		if board.ID == id {
-			// Remove o board
 			boards = append(boards[:i], boards[i+1:]...)
-			
-			// Remove todas as tarefas associadas ao board
+
+			// Remove tasks associadas a esse board
 			newTasks := []Task{}
 			for _, task := range tasks {
 				if task.BoardID != id {
@@ -121,7 +116,7 @@ func DeleteBoardHandler(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 			tasks = newTasks
-			
+
 			found = true
 			break
 		}
@@ -137,13 +132,11 @@ func DeleteBoardHandler(w http.ResponseWriter, r *http.Request) {
 
 // ========== TASKS HANDLERS ==========
 
-// GetTasksHandler retorna todas as tarefas (ou filtra por boardId)
 func GetTasksHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	
-	// Filtrar por boardId se fornecido na query string
+
 	boardID := r.URL.Query().Get("boardId")
-	
+
 	if boardID != "" {
 		filteredTasks := []Task{}
 		for _, task := range tasks {
@@ -154,11 +147,10 @@ func GetTasksHandler(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(filteredTasks)
 		return
 	}
-	
+
 	json.NewEncoder(w).Encode(tasks)
 }
 
-// CreateTaskHandler cria uma nova tarefa
 func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -168,13 +160,11 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 🔸 Verificar se o boardId foi fornecido
 	if strings.TrimSpace(newTask.BoardID) == "" {
 		http.Error(w, "boardId é obrigatório - a tarefa deve pertencer a um board", http.StatusBadRequest)
 		return
 	}
 
-	// 🔸 Verificar se o board existe
 	boardExists := false
 	for _, board := range boards {
 		if board.ID == newTask.BoardID {
@@ -188,13 +178,11 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validar campos obrigatórios e status
 	if err := newTask.Validate(); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	// 🔍 Verificar se já existe uma tarefa com o mesmo título neste board
 	newTitle := strings.TrimSpace(strings.ToLower(*newTask.Title))
 	for _, t := range tasks {
 		if t.BoardID == newTask.BoardID && strings.ToLower(*t.Title) == newTitle {
@@ -203,7 +191,6 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// ✅ Criar nova tarefa
 	newTask.ID = uuid.New().String()
 	newTask.CreatedAt = time.Now()
 	newTask.UpdatedAt = time.Now()
@@ -214,8 +201,6 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(newTask)
 }
 
-
-// UpdateTaskHandler atualiza uma tarefa existente
 func UpdateTaskHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -245,7 +230,7 @@ func UpdateTaskHandler(w http.ResponseWriter, r *http.Request) {
 			tasks[i].Description = updatedTask.Description
 			tasks[i].Status = updatedTask.Status
 			tasks[i].UpdatedAt = time.Now()
-			
+
 			json.NewEncoder(w).Encode(tasks[i])
 			found = true
 			break
@@ -257,7 +242,6 @@ func UpdateTaskHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// DeleteTaskHandler deleta uma tarefa
 func DeleteTaskHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -283,4 +267,119 @@ func DeleteTaskHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusNoContent)
+}
+
+// ========== USER HANDLERS ==========
+
+func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	var newUser User
+	if err := json.NewDecoder(r.Body).Decode(&newUser); err != nil {
+		http.Error(w, "JSON inválido", http.StatusBadRequest)
+		return
+	}
+
+	if err := newUser.Validate(); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	newEmail := strings.TrimSpace(strings.ToLower(newUser.Email))
+	for _, u := range users {
+		if strings.ToLower(u.Email) == newEmail {
+			http.Error(w, "este email já está cadastrado", http.StatusBadRequest)
+			return
+		}
+	}
+
+	newUser.ID = uuid.New().String()
+	newUser.Email = strings.TrimSpace(newUser.Email)
+	newUser.Name = strings.TrimSpace(newUser.Name)
+	newUser.CreatedAt = time.Now()
+	newUser.UpdatedAt = time.Now()
+
+	users = append(users, newUser)
+
+	// 🔑 Gera token JWT após cadastro
+	token, err := GenerateToken(newUser.ID, newUser.Email)
+	if err != nil {
+		http.Error(w, "erro ao gerar token", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"message": "usuário cadastrado com sucesso",
+		"user":    newUser.ToResponse(),
+		"token":   token,
+	})
+}
+
+func LoginHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	var loginReq LoginRequest
+	if err := json.NewDecoder(r.Body).Decode(&loginReq); err != nil {
+		http.Error(w, "JSON inválido", http.StatusBadRequest)
+		return
+	}
+
+	if strings.TrimSpace(loginReq.Email) == "" {
+		http.Error(w, "o email é obrigatório", http.StatusBadRequest)
+		return
+	}
+
+	if strings.TrimSpace(loginReq.Password) == "" {
+		http.Error(w, "a senha é obrigatória", http.StatusBadRequest)
+		return
+	}
+
+	email := strings.TrimSpace(strings.ToLower(loginReq.Email))
+	var foundUser *User
+	for i := range users {
+		if strings.ToLower(users[i].Email) == email {
+			foundUser = &users[i]
+			break
+		}
+	}
+
+	if foundUser == nil {
+		http.Error(w, "email ou senha incorretos", http.StatusUnauthorized)
+		return
+	}
+
+	if foundUser.Password != loginReq.Password {
+		http.Error(w, "email ou senha incorretos", http.StatusUnauthorized)
+		return
+	}
+
+	// ✅ Gerar o token JWT
+	token, err := GenerateToken(foundUser.ID, foundUser.Email)
+	if err != nil {
+		http.Error(w, "erro ao gerar token", http.StatusInternalServerError)
+		return
+	}
+
+	// ✅ Retornar o token junto da mensagem e do usuário
+	response := map[string]interface{}{
+		"message": "login realizado com sucesso",
+		"user":    foundUser.ToResponse(),
+		"token":   token,
+	}
+
+	json.NewEncoder(w).Encode(response)
+}
+
+
+
+func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	usersResponse := make([]UserResponse, len(users))
+	for i, user := range users {
+		usersResponse[i] = user.ToResponse()
+	}
+
+	json.NewEncoder(w).Encode(usersResponse)
 }

@@ -9,9 +9,11 @@ import (
 const (
 	tasksFile  = "tasks.json"
 	boardsFile = "boards.json"
+	usersFile  = "users.json"
 )
 
-// Salva as tarefas no arquivo JSON
+// ========== TASKS ==========
+
 func saveTasks() error {
 	file, err := os.Create(tasksFile)
 	if err != nil {
@@ -24,7 +26,6 @@ func saveTasks() error {
 	return encoder.Encode(tasks)
 }
 
-// Carrega as tarefas do arquivo JSON
 func loadTasks() error {
 	file, err := os.Open(tasksFile)
 	if err != nil {
@@ -39,7 +40,8 @@ func loadTasks() error {
 	return decoder.Decode(&tasks)
 }
 
-// Salva os boards no arquivo JSON
+// ========== BOARDS ==========
+
 func saveBoards() error {
 	file, err := os.Create(boardsFile)
 	if err != nil {
@@ -52,7 +54,6 @@ func saveBoards() error {
 	return encoder.Encode(boards)
 }
 
-// Carrega os boards do arquivo JSON
 func loadBoards() error {
 	file, err := os.Open(boardsFile)
 	if err != nil {
@@ -65,4 +66,32 @@ func loadBoards() error {
 
 	decoder := json.NewDecoder(file)
 	return decoder.Decode(&boards)
+}
+
+// ========== USERS ==========
+
+func saveUsers() error {
+	file, err := os.Create(usersFile)
+	if err != nil {
+		return fmt.Errorf("erro ao criar arquivo de usuários: %v", err)
+	}
+	defer file.Close()
+
+	encoder := json.NewEncoder(file)
+	encoder.SetIndent("", "  ")
+	return encoder.Encode(users)
+}
+
+func loadUsers() error {
+	file, err := os.Open(usersFile)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
+		return fmt.Errorf("erro ao abrir arquivo de usuários: %v", err)
+	}
+	defer file.Close()
+
+	decoder := json.NewDecoder(file)
+	return decoder.Decode(&users)
 }

@@ -76,8 +76,29 @@ func tasksRouter(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Router para /auth (autenticação)
+func authRouter(w http.ResponseWriter, r *http.Request) {
+	switch {
+	case r.Method == "POST" && r.URL.Path == "/auth/register":
+		RegisterHandler(w, r)
+		saveUsers()
+		return
+
+	case r.Method == "POST" && r.URL.Path == "/auth/login":
+		LoginHandler(w, r)
+		return
+
+	case r.Method == "GET" && r.URL.Path == "/auth/users":
+		GetUsersHandler(w, r)
+		return
+
+	default:
+		http.Error(w, "Rota não encontrada", http.StatusNotFound)
+	}
+}
+
 func main() {
-	// Carrega boards e tasks
+	// Carrega boards, tasks e usuários
 	if err := loadBoards(); err != nil {
 		fmt.Println("⚠️ Erro ao carregar boards:", err)
 	} else {
@@ -90,11 +111,18 @@ func main() {
 		fmt.Println("✅ Tasks carregadas com sucesso.")
 	}
 
+	if err := loadUsers(); err != nil {
+		fmt.Println("⚠️ Erro ao carregar usuários:", err)
+	} else {
+		fmt.Println("✅ Usuários carregados com sucesso.")
+	}
+
 	// Configurar rotas
 	http.HandleFunc("/boards", enableCORS(boardsRouter))
 	http.HandleFunc("/boards/", enableCORS(boardsRouter))
 	http.HandleFunc("/tasks", enableCORS(tasksRouter))
 	http.HandleFunc("/tasks/", enableCORS(tasksRouter))
+	http.HandleFunc("/auth/", enableCORS(authRouter))
 
 	http.HandleFunc("/health", enableCORS(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -114,6 +142,10 @@ func main() {
 	fmt.Println("    POST   /tasks      - Criar tarefa")
 	fmt.Println("    PUT    /tasks/:id  - Atualizar tarefa")
 	fmt.Println("    DELETE /tasks/:id  - Deletar tarefa")
+	fmt.Println("  🔐 AUTH:")
+	fmt.Println("    POST   /auth/register - Cadastrar usuário")
+	fmt.Println("    POST   /auth/login    - Login de usuário")
+	fmt.Println("    GET    /auth/users    - Listar usuários")
 	fmt.Println("  🏥 HEALTH:")
 	fmt.Println("    GET    /health     - Health check")
 
