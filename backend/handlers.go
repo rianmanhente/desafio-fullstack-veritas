@@ -25,27 +25,36 @@ func GetBoardsHandler(w http.ResponseWriter, r *http.Request) {
 
 // CreateBoardHandler cria um novo board
 func CreateBoardHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+    w.Header().Set("Content-Type", "application/json")
 
-	var newBoard Board
-	if err := json.NewDecoder(r.Body).Decode(&newBoard); err != nil {
-		http.Error(w, "JSON inválido", http.StatusBadRequest)
-		return
-	}
+    var newBoard Board
+    if err := json.NewDecoder(r.Body).Decode(&newBoard); err != nil {
+        http.Error(w, "JSON inválido", http.StatusBadRequest)
+        return
+    }
 
-	if err := newBoard.Validate(); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
+    if err := newBoard.Validate(); err != nil {
+        http.Error(w, err.Error(), http.StatusBadRequest)
+        return
+    }
 
-	newBoard.ID = uuid.New().String()
-	newBoard.CreatedAt = time.Now()
-	newBoard.UpdatedAt = time.Now()
+    //  Validação: nome único (case-insensitive)
+    newName := strings.TrimSpace(strings.ToLower(newBoard.Name))
+    for _, b := range boards {
+        if strings.ToLower(b.Name) == newName {
+            http.Error(w, "já existe um board com esse nome", http.StatusBadRequest)
+            return
+        }
+    }
 
-	boards = append(boards, newBoard)
+    newBoard.ID = uuid.New().String()
+    newBoard.CreatedAt = time.Now()
+    newBoard.UpdatedAt = time.Now()
 
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(newBoard)
+    boards = append(boards, newBoard)
+
+    w.WriteHeader(http.StatusCreated)
+    json.NewEncoder(w).Encode(newBoard)
 }
 
 // UpdateBoardHandler atualiza um board existente
@@ -173,29 +182,38 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 	}
-	
+
 	if !boardExists {
 		http.Error(w, "Board não encontrado - forneça um boardId válido", http.StatusNotFound)
 		return
 	}
 
-	// Validar tarefa (já inclui a validação do boardId)
+	// Validar campos obrigatórios e status
 	if err := newTask.Validate(); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	// Gerar ID e timestamps
+	// 🔍 Verificar se já existe uma tarefa com o mesmo título neste board
+	newTitle := strings.TrimSpace(strings.ToLower(*newTask.Title))
+	for _, t := range tasks {
+		if t.BoardID == newTask.BoardID && strings.ToLower(*t.Title) == newTitle {
+			http.Error(w, "já existe uma tarefa com esse título neste board", http.StatusBadRequest)
+			return
+		}
+	}
+
+	// ✅ Criar nova tarefa
 	newTask.ID = uuid.New().String()
 	newTask.CreatedAt = time.Now()
 	newTask.UpdatedAt = time.Now()
 
-	// Adicionar ao "banco"
 	tasks = append(tasks, newTask)
 
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(newTask)
 }
+
 
 // UpdateTaskHandler atualiza uma tarefa existente
 func UpdateTaskHandler(w http.ResponseWriter, r *http.Request) {
