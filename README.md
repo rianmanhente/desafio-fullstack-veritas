@@ -115,7 +115,7 @@ Para organizar a comunicação entre camadas, foi criada uma pasta `services` no
 
 # Limitações Conhecidas
 
--- Persistência baseada em arquivos JSON
+⚙️ Persistência baseada em arquivos JSON
 
 Toda a lógica de dados depende de arquivos (boards.json, tasks.json, users.json).
 
@@ -127,7 +127,7 @@ A escalabilidade é praticamente nula , essa estrutura só suporta um pequeno n�
 
 🧩 Melhoria futura: migrar para um banco relacional (PostgreSQL) por exemmplo e usar uma camada ORM/SQL builder (como GORM).
 
--- Ausência de testes
+⚙️ Ausência de testes
 
 Não há nenhum diretório __tests__, *_test.go ou configuração de Jest no frontend.
 Isso significa que o projeto ainda não tem testes unitários ou de integração — o que é tranquilo num desafio, mas limita a manutenção.
@@ -138,7 +138,7 @@ No backend usar testing nativo do Go para testar endpoints e regras de negócio.
 
 No frontend usar React Testing Library e Jest para validar componentes e interações.
 
---Falta de estado global ou gerenciamento complexo
+⚙️ Falta de estado global ou gerenciamento complexo
 
 No frontend, não coloquei nenhuma pasta store/, context/ ou biblioteca como Zustand ou Redux.
 Isso sugere que:
@@ -150,7 +150,7 @@ Isso é funcional, mas limita a comunicação entre componentes e a escalabilida
 🧩 Melhoria futura:
 Adicionar Context API, Zustand ou Redux Toolkit para gerenciar o estado global do Kanban
 
---Comunicação e tratamento de erros
+⚙️ Comunicação e tratamento de erros
 
 No backend, como há apenas handlers.go, os endpoints estao retornando erros genéricos sem códigos de status detalhados
 
@@ -162,7 +162,7 @@ Criar middleware para autenticação JWT e logging de requisições.
 
 Retornar mensagens de erro padronizadas em JSON (status, message, error_code
 
---Backend não modularizado para múltiplos ambientes
+⚙️ Backend não modularizado para múltiplos ambientes
 
 Não há a .env ou configuração de variáveis de ambiente no backend (ex: porta, secret JWT, caminhos de arquivos JSON).
 Isso torna o deploy menos flexível.
