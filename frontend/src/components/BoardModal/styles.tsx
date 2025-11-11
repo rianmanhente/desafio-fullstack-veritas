@@ -43,7 +43,7 @@ export const CloseButton = styled.button`
   background: none;
   border: none;
   font-size: 28px;
-  color: ${({ theme }) => theme.text.secondary};
+  color: white;
   cursor: pointer;
   width: 32px;
   height: 32px;
@@ -51,8 +51,8 @@ export const CloseButton = styled.button`
   transition: all 0.2s ease;
 
   &:hover {
-    background: ${({ theme }) => theme.colors.gray}33; /* 20% opacity */
-    color: ${({ theme }) => theme.text.primary};
+    background: ${({ theme }) => theme.colors.light}33; /* 20% opacity */
+    color: ${({ theme }) => theme.colors.gray};
   }
 `;
 

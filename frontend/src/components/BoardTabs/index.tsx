@@ -1,4 +1,3 @@
-import { useState } from "react";
 import type { Board } from "../../utils/typeBoard";
 import { TabsContainer, Tab, AddBoardButton, TabContent, DeleteButton, EditButton, TabActions } from "./styles";
 import Swal from "sweetalert2";
@@ -20,7 +19,6 @@ export default function BoardTabs({
   onEditBoard,
   onDeleteBoard,
 }: BoardTabsProps) {
-  const [hoveredTab, setHoveredTab] = useState<string | null>(null);
 
   const handleDelete = async (e: React.MouseEvent, board: Board) => {
     e.stopPropagation();
@@ -51,10 +49,8 @@ export default function BoardTabs({
       {boards.map((board) => (
         <Tab
           key={board.id}
-          $isActive={activeBoard === board.id} // 🔸 MUDANÇA AQUI
+          $isActive={activeBoard === board.id} 
           onClick={() => onSelectBoard(board.id)}
-          onMouseEnter={() => setHoveredTab(board.id)}
-          onMouseLeave={() => setHoveredTab(null)}
         >
           <TabContent>{board.name}</TabContent>
           <TabActions>
