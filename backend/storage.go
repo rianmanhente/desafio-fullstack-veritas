@@ -7,9 +7,10 @@ import (
 )
 
 const (
-	tasksFile  = "tasks.json"
-	boardsFile = "boards.json"
-	usersFile  = "users.json"
+	boardsFile = "data/boards.json"
+	tasksFile = "data/tasks.json"
+	usersFile = "data/users.json"
+
 )
 
 // ========== TASKS ==========
