@@ -125,14 +125,14 @@ Não existe persistência transacional , se o servidor cair durante uma gravaç�
 
 A escalabilidade é praticamente nula , essa estrutura só suporta um pequeno número de usuários/tarefas.
 
-Melhoria futura: migrar para um banco relacional (PostgreSQL) por exemmplo e usar uma camada ORM/SQL builder (como GORM).
+🧩 Melhoria futura: migrar para um banco relacional (PostgreSQL) por exemmplo e usar uma camada ORM/SQL builder (como GORM).
 
 -- Ausência de testes
 
 Não há nenhum diretório __tests__, *_test.go ou configuração de Jest no frontend.
 Isso significa que o projeto ainda não tem testes unitários ou de integração — o que é tranquilo num desafio, mas limita a manutenção.
 
-Melhoria futura:
+🧩 Melhoria futura:
 
 No backend usar testing nativo do Go para testar endpoints e regras de negócio.
 
@@ -147,7 +147,7 @@ O estado das tarefas e colunas é sendo mantido localmente (em useState ou useEf
 
 Isso é funcional, mas limita a comunicação entre componentes e a escalabilidade da UI (ex: múltiplos quadros, usuários, sincronização em tempo real).
 
-Melhoria futura:
+🧩 Melhoria futura:
 Adicionar Context API, Zustand ou Redux Toolkit para gerenciar o estado global do Kanban
 
 --Comunicação e tratamento de erros
