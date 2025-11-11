@@ -1,0 +1,26 @@
+[
+  {
+    "id": "588efe79-dfaf-49b3-9a1e-6ba28928e03c",
+    "name": "João Silva",
+    "email": "joao@example.com",
+    "password": "senha123",
+    "createdAt": "2025-11-10T14:37:18.39808-03:00",
+    "updatedAt": "2025-11-10T14:37:18.39808-03:00"
+  },
+  {
+    "id": "c6397c38-a408-4e45-9ff8-0740941d37a8",
+    "name": "João Silva",
+    "email": "joao@exeample.com",
+    "password": "senha123",
+    "createdAt": "2025-11-10T14:41:58.094297-03:00",
+    "updatedAt": "2025-11-10T14:41:58.094297-03:00"
+  },
+  {
+    "id": "02b84bcd-69ca-4bee-9ef5-d5caf8fa0e27",
+    "name": "João Silva",
+    "email": "joao@exeamplee.com",
+    "password": "senha123",
+    "createdAt": "2025-11-10T15:07:14.830355-03:00",
+    "updatedAt": "2025-11-10T15:07:14.830355-03:00"
+  }
+]
