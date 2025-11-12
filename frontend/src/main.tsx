@@ -2,7 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import { ThemeProvider } from "styled-components";
-import { theme } from "./utils/theme.tsx"; // ou "./utils/theme"
+import { theme } from "./utils/theme.tsx"; 
 
 
 createRoot(document.getElementById("root")!).render(
