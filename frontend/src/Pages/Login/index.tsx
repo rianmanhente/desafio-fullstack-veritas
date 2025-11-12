@@ -70,6 +70,7 @@ export default function Login() {
         />
         <Button label="Login" type="submit" />
       </form>
+      <Button label="Voltar para Cadastro" onClick={() => navigate("/register")} />
     </FormContainer>
   );
 }

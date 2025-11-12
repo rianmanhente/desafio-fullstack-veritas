@@ -9,6 +9,7 @@ export const StyledButton = styled.button<{ variant: "primary" | "secondary" }>`
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s;
+  margin-top: 10px;
 
   background-color: ${({ theme, variant }) =>
     variant === "primary"

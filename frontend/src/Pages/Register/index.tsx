@@ -88,6 +88,7 @@ export default function Register() {
         <Input label="Senha" name="password" type="password" value={form.password} onChange={handleChange} />
         <Button label="Registrar" type="submit" />
       </form>
+        <Button label="Já Tenho Cadastro" onClick={() => navigate("/login")} />
     </FormContainer>
   );
 }
