@@ -2,7 +2,7 @@ import { api } from "./api";
 import type { Task } from "../utils/typeTask";
 
 interface CreateTaskData {
-  boardId: string; // 🔸 Novo campo obrigatório
+  boardId: string; 
   title: string;
   description: string;
   status: Task["status"];

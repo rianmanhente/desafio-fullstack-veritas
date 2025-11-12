@@ -60,7 +60,7 @@ function Board() {
     fetchTasks();
   }, [activeBoard]);
 
-  // ========== BOARDS ==========
+  // BOARDS 
   const handleAddBoard = () => {
     setSelectedBoard(null);
     setIsBoardModalOpen(true);
@@ -141,7 +141,7 @@ function Board() {
     }
   };
 
-  // ========== TASKS ==========
+  // TASKS 
   const handleAddTask = (status: Task["status"]) => {
     if (!activeBoard) {
       alert("Selecione um board primeiro!");

@@ -22,7 +22,7 @@ export default function Register() {
  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 🔒 Validação antes de enviar para a API
+    //  Validação antes de enviar para a API
     if (form.name.trim() === "" || form.email.trim() === "" || form.password.trim() === "") {
       Swal.fire({
         icon: "warning",
